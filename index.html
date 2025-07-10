@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <style>
+        /* CSS สำหรับตกแต่งหน้าเว็บ */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #fce4ec;
+            color: #333;
+            text-align: center;
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: relative;
+            padding: 20px 10px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: fadeInScale 1s ease-out forwards;
+            max-width: 95%;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+            border: 2px solid #ff80ab;
+            margin: 20px auto;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #e91e63;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+            animation: pulse 2s infinite;
+        }
+
+        p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: slideInUp 1s ease-out forwards;
+            animation-delay: 0.8s;
+            color: #555;
+        }
+
+        .button {
+            display: block;
+            width: fit-content;
+            margin: 10px auto;
+            background-color: #ff4081;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+            animation-delay: 1.5s;
+            border: none;
+            cursor: pointer;
+            box-sizing: border-box;
+            white-space: nowrap;
+        }
+
+        .button:hover {
+            background-color: #e91e63;
+            transform: translateY(-3px);
+        }
+
+        /* กล่องแสดงรูปภาพและข้อความลับ Pop-up */
+        .popup-box {
+            /* **ปรับปรุงตรงนี้** */
+            display: none; /* เริ่มต้นซ่อนด้วย display: none; */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999; /* **เพิ่ม z-index ให้สูงขึ้นอีก** */
+            /* เอา transition และ opacity/visibility ออกจาก .popup-box โดยตรง */
+            /* เพื่อให้จัดการการแสดงผลด้วย display: flex/none */
+        }
+
+        .popup-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-sizing: border-box;
+            /* เพิ่ม animation เมื่อ Pop-up ปรากฏ */
+            transform: scale(0.7); /* เริ่มต้นจากขนาดเล็ก */
+            opacity: 0; /* เริ่มต้นซ่อน */
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+
+        /* **คลาสสำหรับแสดง Pop-up** */
+        .popup-box.active {
+            display: flex; /* เมื่อมีคลาส active ให้แสดงเป็น flex box */
+        }
+
+        .popup-box.active .popup-content {
+            transform: scale(1); /* ขยายกลับมาขนาดปกติ */
+            opacity: 1; /* ทำให้มองเห็น */
+        }
+
+
+        .popup-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .popup-content p {
+            color: #0d090a;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 0;
+            opacity: 1;
+            animation: none;
+            line-height: 1.5;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.8em;
+            color: #888;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        /* Keyframe Animations */
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Media Queries สำหรับหน้าจอมือถือโดยเฉพาะ */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            p {
+                font-size: 1em;
+            }
+
+            .container {
+                padding: 25px 20px;
+            }
+
+            .button {
+                font-size: 1em;
+                padding: 12px 25px;
+            }
+
+            .popup-content {
+                padding: 20px;
+            }
+
+            .popup-content p {
+                font-size: 1em;
+            }
+
+            .close-btn {
+                font-size: 1.5em;
+            }
+        }
+
+        /* สำหรับหน้าจอที่เล็กมาก ๆ */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            p {
+                font-size: 0.9em;
+            }
+            .container {
+                padding: 20px 15px;
+            }
+            .button {
+                font-size: 0.9em;
+                padding: 10px 20px;
+            }
+            .popup-content {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <p>
+            วันนี้มาส่งแรงใจแบบใหม่นะ :)<br>
+            &#x2193;
+        </p>
+        <a href="#" class="button" id="secretMessageBtn1">กดอันนี้ก่อน</a>
+        <a href="#" class="button" id="secretMessageBtn2">ต่อไปกดอันนี้</a>
+    </div>
+
+    <div id="imagePopup" class="popup-box">
+        <div class="popup-content">
+            <span class="close-btn">&times;</span>
+            <img src="ME.JPG" alt="รูปภาพพิเศษ">
+            <p>เธอชนะแมวทุกตัวบนโลกแล้วนะ &#x1F60A;</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const secretMessageBtn1 = document.getElementById('secretMessageBtn1');
+            const secretMessageBtn2 = document.getElementById('secretMessageBtn2');
+            const imagePopup = document.getElementById('imagePopup');
+            const closeBtn = imagePopup.querySelector('.close-btn');
+
+            // ปุ่มแรก: แสดงรูปภาพและข้อความ
+            secretMessageBtn1.addEventListener('click', (event) => {
+                event.preventDefault(); // ป้องกันการกระทำเริ่มต้นของลิงก์
+                console.log('Button 1 clicked!'); // เพิ่ม console log เพื่อ debug
+                imagePopup.classList.add('active'); // เพิ่มคลาส 'active' เพื่อแสดง Pop-up
+            });
+
+            // ปุ่มปิด Pop-up
+            closeBtn.addEventListener('click', () => {
+                console.log('Close button clicked!'); // เพิ่ม console log เพื่อ debug
+                imagePopup.classList.remove('active'); // ลบคลาส 'active' เพื่อซ่อน Pop-up
+            });
+
+            // ปิด Pop-up เมื่อคลิกนอกกล่อง (ส่วนพื้นหลังทึบแสง)
+            imagePopup.addEventListener('click', (event) => {
+                if (event.target === imagePopup) {
+                    console.log('Clicked outside popup!'); // เพิ่ม console log เพื่อ debug
+                    imagePopup.classList.remove('active');
+                }
+            });
+
+            // ปุ่มที่สอง: ยังคงใช้ alert เหมือนเดิม
+            secretMessageBtn2.addEventListener('click', (event) => {
+                event.preventDefault();
+                alert('ไม่รู้ว่าน่ารักหรือขำเลยอ่ะ5555555555555 ');
+            });
+        });
+    </script>
+</body>
+</html>
